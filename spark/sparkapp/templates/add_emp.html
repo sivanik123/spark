@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add Emp</title>
+</head>
+<body>
+    <h1>Add Emp</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h2>User Details</h2>
+        {{ user_form.as_p }}
+        <h2>Employee Details</h2>
+        {{ employee_form.as_p }}
+        <button type="submit">Register</button>
+      </form>
+</body>
+</html>
