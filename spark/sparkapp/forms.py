@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Employee, Department, Designation
+from .models import Employee, Department, Designation,EventType
 from django.contrib.auth.forms import UserCreationForm
 
 class DepartmentForm(forms.ModelForm):
@@ -72,3 +72,11 @@ class UserEmployeeForm(forms.ModelForm):
             'status',
             'designation_id',
         ]
+
+class EventTypeForm(forms.ModelForm):
+    class Meta:
+        model = EventType
+        fields = ['type_description']
+        widgets = {
+            'type_description': forms.TextInput(attrs={'placeholder': 'Enter Event Type Description'}),
+        }

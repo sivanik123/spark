@@ -36,3 +36,11 @@ class Employee(models.Model):
 
     def _str_(self):  # Corrected method name
         return f'{self.emp_name} ({self.designation_id.designation_name})'
+    from django.db import models
+
+class EventType(models.Model):
+    type_id = models.AutoField(primary_key=True)  # Auto-incremented primary key
+    type_description = models.CharField(max_length=200)  # Description of the event type
+
+    def __str__(self):
+        return self.type_description
