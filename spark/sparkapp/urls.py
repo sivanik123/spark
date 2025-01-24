@@ -10,4 +10,6 @@ urlpatterns = [
     path('add-emp/', views.add_emp, name='add_emp'),  # Add data to the database
     path('add-department/', views.add_department, name='add_department'),
     path('add-designation/', views.add_designation, name='add_designation'),
+    path('add-event-type/', views.add_event_type, name='add_event_type'),
 ]
+

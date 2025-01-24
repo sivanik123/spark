@@ -3,7 +3,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import UserForm, EmployeeForm,DepartmentForm,DesignationForm
+from .forms import UserForm, EmployeeForm,DepartmentForm,DesignationForm,EventTypeForm
 from django.contrib.auth.models import User
 from .models import Department, Designation
 
@@ -54,3 +54,16 @@ def add_designation(request):
     else:
         form = DesignationForm()
     return render(request, 'add_designation.html', {'form': form})
+
+@login_required
+def add_event_type(request):
+    if request.method == 'POST':
+        form = EventTypeForm(request.POST)
+        if form.is_valid():
+            form.save()  # Save the new event type
+            messages.success(request, "Event Type added successfully.")
+            return redirect('index')  # Redirect to the homepage or another success page
+    else:
+        form = EventTypeForm()
+    
+    return render(request, 'add_event_type.html', {'form': form})
