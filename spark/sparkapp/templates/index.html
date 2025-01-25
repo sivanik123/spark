@@ -1,15 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Home</title>
-</head>
-<body>
-    <h1>Welcome to Spark</h1>
-    <a href="{% url 'login' %}">Login</a> |
-    <a href="{% url 'logout' %}">Logout</a> |
-    <a href="{% url 'add_emp' %}">Add Emp</a> |
-    <a href="{% url 'add_department' %}">Add Department</a> |
-    <a href="{% url 'add_designation' %}">Add Designation</a> |     
-    <a href="{% url 'add_event_type' %}">Add EventType</a> |
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Home - SPARK App{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h2>Welcome to SPARK</h2>
+    <p>Navigate through the app to manage employees, events, and more!</p>
+
+    <ul class="list-group mt-3">
+        <li class="list-group-item">
+            <a href="{% url 'add_department' %}">Add Department</a>
+        </li>
+        <li class="list-group-item">
+            <a href="{% url 'add_designation' %}">Add Designation</a>
+        </li>
+        <li class="list-group-item">
+            <a href="{% url 'add_emp' %}">Add Employee</a>
+        </li>
+        <li class="list-group-item">
+            <a href="{% url 'add_event_type' %}">Add Event Type</a>
+        </li>
+        <li class="list-group-item">
+            <a href="{% url 'add_venue' %}">Add Venue</a>
+        </li>
+        <li class="list-group-item">
+            <a href="{% url 'add_role' %}">Add Role</a>
+        </li>
+        <li class="list-group-item">
+            <a href="{% url 'add_event' %}">Add Event</a>
+        </li>
+        <li class="list-group-item">
+            <a href="{% url 'add_event_participation' %}">Add Event Participation</a>
+        <li class="list-group-item">
+            <a href="{% url 'add_role_assignment' %}">Add Role Assign</a>
+        </li>
+    </ul>
+</div>
+{% endblock %}

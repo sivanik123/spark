@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Employee, Department, Designation,EventType
+from .models import Employee, Department, Designation,EventType,Venue,Role,EmployeeRoleAssignment, Event,EventParticipation
 from django.contrib.auth.forms import UserCreationForm
 
 class DepartmentForm(forms.ModelForm):
@@ -78,5 +78,57 @@ class EventTypeForm(forms.ModelForm):
         model = EventType
         fields = ['type_description']
         widgets = {
-            'type_description': forms.TextInput(attrs={'placeholder': 'Enter Event Type Description'}),
+            'type_description': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+class VenueForm(forms.ModelForm):
+    class Meta:
+        model = Venue
+        fields = ['name', 'address']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Venue Name'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter Venue Address', 'rows': 3}),
+        }
+
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+
+class RoleForm(forms.ModelForm):
+    class Meta:
+        model = Role
+        fields = ['role_name', 'role_description']
+        widgets = {
+            'role_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Role Name'}),
+            'role_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Enter Role Description'}),
+        }
+
+class EmployeeRoleAssignmentForm(forms.ModelForm):
+    class Meta:
+        model = EmployeeRoleAssignment
+        fields = ['emp_id', 'role_id', 'assigned_date', 'relieved_date', 'document']
+        widgets = {
+            'assigned_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'relieved_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
+
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = ['title', 'type_id', 'from_date', 'to_date', 'venue']
+        widgets = {
+            'from_date': forms.DateInput(attrs={'type': 'date'}),
+            'to_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+
+class EventParticipationForm(forms.ModelForm):
+    class Meta:
+        model = EventParticipation
+        fields = ['emp_id', 'event_id', 'doc_link']
+        widgets = {
+            'doc_link': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }

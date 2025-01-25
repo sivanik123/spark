@@ -39,8 +39,65 @@ class Employee(models.Model):
     from django.db import models
 
 class EventType(models.Model):
-    type_id = models.AutoField(primary_key=True)  # Auto-incremented primary key
-    type_description = models.CharField(max_length=200)  # Description of the event type
+    EVENT_TYPE_CHOICES = [
+        ('Seminar', 'Seminar'),
+        ('Webinar', 'Webinar'),
+        ('Workshop', 'Workshop'),
+    ]
+
+    type_id = models.AutoField(primary_key=True)
+    type_description = models.CharField(
+        max_length=50,
+        choices=EVENT_TYPE_CHOICES,
+        default='Seminar',  # Default value
+    )
 
     def __str__(self):
         return self.type_description
+
+class Venue(models.Model):
+    venue_id = models.AutoField(primary_key=True)  # Auto-incrementing primary key
+    name = models.CharField(max_length=200)  # Venue name
+    address = models.TextField()  # Venue address
+
+    def __str__(self):
+        return f"{self.name} - {self.address}"
+    
+class Role(models.Model):
+    role_id = models.AutoField(primary_key=True)  # Auto-incrementing primary key
+    role_name = models.CharField(max_length=100)  # Name of the role
+    role_description = models.TextField()  # Description of the role
+
+    def __str__(self):
+        return self.role_name  
+    
+class EmployeeRoleAssignment(models.Model):
+    emp_id = models.ForeignKey(Employee, on_delete=models.CASCADE)  # Reference Employee
+    role_id = models.ForeignKey(Role, on_delete=models.CASCADE)  # Reference Role
+    assigned_date = models.DateField()
+    relieved_date = models.DateField(null=True, blank=True)
+    document = models.FileField(upload_to="role_documents/", null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.emp_id.emp_name} - {self.role_id.role_name}"
+    
+# Event model
+class Event(models.Model):
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=200)  # Event title
+    type_id = models.ForeignKey(EventType, on_delete=models.CASCADE)  # Reference to EventType
+    from_date = models.DateField()  # Event start date
+    to_date = models.DateField()  # Event end date
+    venue = models.ForeignKey(Venue, on_delete=models.CASCADE)  # Reference to Venue
+
+    def __str__(self):
+        return self.title
+    
+# Event Participation model
+class EventParticipation(models.Model):
+    emp_id = models.ForeignKey('Employee', on_delete=models.CASCADE)  # String reference to Employee
+    event_id = models.ForeignKey('Event', on_delete=models.CASCADE)  # String reference to Event
+    doc_link = models.FileField(upload_to='participation_docs/', null=True, blank=True)  # File upload for proof
+
+    def __str__(self):
+        return f"{self.emp_id.emp_name} - {self.event_id.title}"
