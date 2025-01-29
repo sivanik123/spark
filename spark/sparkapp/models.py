@@ -39,21 +39,15 @@ class Employee(models.Model):
     from django.db import models
 
 class EventType(models.Model):
-    EVENT_TYPE_CHOICES = [
-        ('Seminar', 'Seminar'),
-        ('Webinar', 'Webinar'),
-        ('Workshop', 'Workshop'),
-    ]
-
     type_id = models.AutoField(primary_key=True)
     type_description = models.CharField(
-        max_length=50,
-        choices=EVENT_TYPE_CHOICES,
-        default='Seminar',  # Default value
+        max_length=100,  # Adjust the max length as needed
+        blank=False,  # Ensure it's not empty
     )
 
     def __str__(self):
         return self.type_description
+
 
 class Venue(models.Model):
     venue_id = models.AutoField(primary_key=True)  # Auto-incrementing primary key

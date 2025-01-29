@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %}Add Employee - SPARK{% endblock %}
+{% block title %}Manage Employee - SPARK{% endblock %}
 
 {% block content %}
-<h2>Add New Employee</h2>
+<h2> New Employee</h2>
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ user_form.as_p }}

@@ -2,11 +2,11 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Manage Event</h2>
+    <h2>Manage Role</h2>
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-primary mt-3"> Event</button>
+        <button type="submit" class="btn btn-primary">Role</button>
     </form>
 </div>
 {% endblock %}

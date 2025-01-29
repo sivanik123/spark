@@ -1,12 +1,13 @@
 
 # views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserForm, EmployeeForm,DepartmentForm,DesignationForm,EventTypeForm,VenueForm,RegisterForm,RoleForm,EmployeeRoleAssignmentForm,EventForm,EventParticipationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
-#from .models import Department, Designation
+from .models import Department, Designation,EventType
+from django.http import Http404
 
 
 # Home page
@@ -44,30 +45,53 @@ def add_department(request):
         form = DepartmentForm()
     return render(request, 'add_dept.html', {'form': form})
 
-# View to add a new Designation
 @login_required
+def manage_designation(request):
+    designations = Designation.objects.all()
+    return render(request, 'manage_designation.html', {'designations': designations})
+
+# Add Designation View
 def add_designation(request):
     if request.method == 'POST':
         form = DesignationForm(request.POST)
         if form.is_valid():
-            form.save()  # Save the new designation
-            return redirect('index')  # Redirect to a designation list page (you can modify this)
+            form.save()
+            return redirect('manage_designation')
     else:
         form = DesignationForm()
     return render(request, 'add_designation.html', {'form': form})
 
+# Edit Designation View
+def edit_designation(request, designation_id):
+    designation = get_object_or_404(Designation, pk=designation_id)
+    if request.method == 'POST':
+        form = DesignationForm(request.POST, instance=designation)
+        if form.is_valid():
+            form.save()
+            return redirect('manage_designation')
+    else:
+        form = DesignationForm(instance=designation)
+    return render(request, 'edit_designation.html', {'form': form})
+
+# Delete Designation View
+def delete_designation(request, designation_id):
+    designation = get_object_or_404(Designation, pk=designation_id)
+    designation.delete()
+    return redirect('manage_designation')
+
 @login_required
 def add_event_type(request):
+    event_types = EventType.objects.all()  # Get all event types
     if request.method == 'POST':
         form = EventTypeForm(request.POST)
         if form.is_valid():
             form.save()  # Save the new event type
             messages.success(request, "Event Type added successfully.")
-            return redirect('index')  # Redirect to the homepage or another success page
+            return redirect('manage_event_type')  # Redirect to manage event type
     else:
         form = EventTypeForm()
-    
-    return render(request, 'add_event_type.html', {'form': form})
+
+    return render(request, 'manage_event_type.html', {'form': form, 'event_types': event_types})
 
 @login_required
 def add_venue(request):
@@ -112,7 +136,7 @@ def add_role(request):
             return redirect('index')  # Redirect to the home page
     else:
         form = RoleForm()
-    return render(request, 'add_role.html', {'form': form})
+    return render(request, 'add_roles.html', {'form': form})
 
 @login_required
 def add_role_assignment(request):
@@ -155,3 +179,22 @@ def logout_view(request):
     return redirect('logout_success')  # Redirects to a thank you page or home page
 def logout_success(request):
     return render(request, 'logout_success.html')
+from django.shortcuts import get_object_or_404
+
+@login_required
+def edit_event_type(request, type_id):
+    # Use get_object_or_404 to get the EventType object by type_id
+    event_type = get_object_or_404(EventType, type_id=type_id)
+
+    if request.method == 'POST':
+        # Process the form submission here
+        pass
+
+    return render(request, 'edit_event_type.html', {'event_type': event_type})
+
+@login_required
+def delete_event_type(request, type_id):
+    event_type = get_object_or_404(EventType, pk=type_id)
+    event_type.delete()
+    # Redirecting back to the event type management page
+    return redirect('manage_event_type')

@@ -76,10 +76,14 @@ class UserEmployeeForm(forms.ModelForm):
 class EventTypeForm(forms.ModelForm):
     class Meta:
         model = EventType
-        fields = ['type_description']
-        widgets = {
-            'type_description': forms.Select(attrs={'class': 'form-control'}),
-        }
+        fields = ['type_description']  # Assuming you want to allow users to add a description
+
+    # Modify the field to use a Textarea widget instead of a dropdown
+    type_description = forms.CharField(widget=forms.Textarea(attrs={
+        'rows': 4,
+        'cols': 50,
+        'placeholder': 'Enter event type description here...'
+    })) 
 
 class VenueForm(forms.ModelForm):
     class Meta:
