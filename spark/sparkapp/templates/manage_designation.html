@@ -20,7 +20,7 @@
                     <td>{{ designation.designation_name }}</td>
                     <td>
                         <a href="{% url 'edit_designation' designation.designation_id %}" class="btn btn-primary">Edit</a>
-                        <button class="btn btn-danger" onclick="showDeleteModal('{% url 'delete_designation' designation.designation_id %}')">Delete</button>
+                        <a href="{% url 'delete_designation' designation.designation_id %}" class="btn btn-primary">Delete</a>
                     </td>
                 </tr>
             {% endfor %}
