@@ -1,0 +1,23 @@
+<!-- admin_dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+    <h2>Welcome, Admin</h2> 
+    <p>Manage events, view user participation, and oversee site activities.</p>
+    
+    <h3>Events</h3>
+    <ul>
+        {% for event in events %}
+            <li>{{ event.name }} - {{ event.date }}</li>
+        {% endfor %}
+    </ul>
+    
+    <h3>Users</h3>
+    <ul>
+        {% for user in users %}
+            <li>{{ user.username }} ({{ user.email }})</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

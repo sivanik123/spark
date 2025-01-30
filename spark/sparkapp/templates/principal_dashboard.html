@@ -1,0 +1,16 @@
+<!-- principal_dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Principal Dashboard{% endblock %}
+
+{% block content %}
+    <h2>Welcome, Principal</h2>
+    <p>View all employee (teacher) details.</p>
+    
+    <h3>Teacher Details</h3>
+    <ul>
+        {% for teacher in teachers %}
+            <li>{{ teacher.username }} - {{ teacher.email }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

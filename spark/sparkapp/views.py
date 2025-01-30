@@ -1,21 +1,53 @@
-
-# views.py
-from django.shortcuts import render, redirect,get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import UserForm, EmployeeForm,DepartmentForm,DesignationForm,EventTypeForm,VenueForm,RegisterForm,RoleForm,EmployeeRoleAssignmentForm,EventForm,EventParticipationForm
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.contrib.auth import logout
-from .models import Department, Designation,EventType
-from django.http import Http404
+from .forms import UserForm, EmployeeForm, DepartmentForm, DesignationForm, EventTypeForm, VenueForm, RegisterForm, RoleForm, EmployeeRoleAssignmentForm, EventForm, EventParticipationForm
+from .models import Department, Designation, EventType, Role, EmployeeRoleAssignment, Event, EventParticipation
 
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.contrib.auth.forms import AuthenticationForm
+
+# Login view
+def login_view(request):
+    if request.method == 'POST':
+        # Get username and password from the form
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        # Authenticate the user
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            # User is authenticated, log them in
+            login(request, user)
+            messages.success(request, 'Login successful!')
+
+            # Redirect user to the appropriate dashboard based on role
+            if user.is_superuser:
+                return redirect('admin_dashboard')
+            elif user.groups.filter(name='Teachers').exists():
+                return redirect('teacher_dashboard')
+            elif user.groups.filter(name='Principals').exists():
+                return redirect('principal_dashboard')
+            else:
+                return redirect('index')
+        else:
+            # Authentication failed, show error
+            messages.error(request, 'Invalid username or password.')
+
+    return render(request, 'login.html')  # Show login page if no POST request
 
 # Home page
 @login_required
 def index(request):
     return render(request, 'index.html')
 
-# Add data to the table
+
+# Add Employee
 @login_required
 def add_emp(request):
     if request.method == 'POST':
@@ -23,34 +55,44 @@ def add_emp(request):
         employee_form = EmployeeForm(request.POST, request.FILES)
         if user_form.is_valid() and employee_form.is_valid():
             # Save User
-            user = user_form.save()
+            user = user_form.save(commit=False)
+            password = user_form.cleaned_data['password']  # Get password from the form
+            user.set_password(password)  # Set the password
+            user.save()  # Save the user with the password
             # Save Employee with User instance
             employee = employee_form.save(commit=False)
             employee.user = user
             employee.save()
-            return redirect('index')  # Redirect to a success page
+            messages.success(request, 'Employee added successfully!')
+            return redirect('index')
     else:
         user_form = UserForm()
         employee_form = EmployeeForm()
     return render(request, 'add_emp.html', {'user_form': user_form, 'employee_form': employee_form})
-# View to add a new Department
+
+
+# Department Views
 @login_required
 def add_department(request):
     if request.method == 'POST':
         form = DepartmentForm(request.POST)
         if form.is_valid():
             form.save()  # Save the new department
-            return redirect('index')  # Redirect to a department list page (you can modify this)
+            return redirect('index')
     else:
         form = DepartmentForm()
     return render(request, 'add_dept.html', {'form': form})
 
+
+# Designation Views
 @login_required
 def manage_designation(request):
     designations = Designation.objects.all()
     return render(request, 'manage_designation.html', {'designations': designations})
 
-# Add Designation View
+
+# Add Designation
+@login_required
 def add_designation(request):
     if request.method == 'POST':
         form = DesignationForm(request.POST)
@@ -61,7 +103,9 @@ def add_designation(request):
         form = DesignationForm()
     return render(request, 'add_designation.html', {'form': form})
 
-# Edit Designation View
+
+# Edit Designation
+@login_required
 def edit_designation(request, designation_id):
     designation = get_object_or_404(Designation, pk=designation_id)
     if request.method == 'POST':
@@ -73,83 +117,127 @@ def edit_designation(request, designation_id):
         form = DesignationForm(instance=designation)
     return render(request, 'edit_designation.html', {'form': form})
 
-# Delete Designation View
+
+# Delete Designation
+@login_required
 def delete_designation(request, designation_id):
     designation = get_object_or_404(Designation, pk=designation_id)
     designation.delete()
     return redirect('manage_designation')
 
+
+# Event Type Views
+@login_required
+def manage_event_type(request):
+    event_types = EventType.objects.all()
+    return render(request, 'manage_event_type.html', {'event_types': event_types})
+
+
+# Add Event Type
 @login_required
 def add_event_type(request):
-    event_types = EventType.objects.all()  # Get all event types
     if request.method == 'POST':
         form = EventTypeForm(request.POST)
         if form.is_valid():
-            form.save()  # Save the new event type
+            form.save()
             messages.success(request, "Event Type added successfully.")
-            return redirect('manage_event_type')  # Redirect to manage event type
+            return redirect('manage_event_type')
     else:
         form = EventTypeForm()
 
-    return render(request, 'manage_event_type.html', {'form': form, 'event_types': event_types})
+    return render(request, 'manage_event_type.html', {'form': form})
 
+
+# Edit Event Type
+@login_required
+def edit_event_type(request, type_id):
+    event_type = get_object_or_404(EventType, pk=type_id)
+
+    if request.method == 'POST':
+        form = EventTypeForm(request.POST, instance=event_type)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Event Type updated successfully.")
+            return redirect('manage_event_type')
+
+    return render(request, 'edit_event_type.html', {'form': form, 'event_type': event_type})
+
+
+# Delete Event Type
+@login_required
+def delete_event_type(request, type_id):
+    event_type = get_object_or_404(EventType, pk=type_id)
+    event_type.delete()
+    return redirect('manage_event_type')
+
+
+# Venue Views
 @login_required
 def add_venue(request):
     if request.method == 'POST':
         form = VenueForm(request.POST)
         if form.is_valid():
-            form.save()  # Save the new venue
-            return redirect('index')  # Redirect to the home page (you can modify this as needed)
+            form.save()
+            return redirect('index')
     else:
         form = VenueForm()
     return render(request, 'add_venue.html', {'form': form})
 
+
+# Registration
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Log the user in after registration
+            password = form.cleaned_data['password']  # Get password from the form
+            user.set_password(password)  # Hash and set the password
+            user.save()  # Save the user with the password
+            login(request, user)
             messages.success(request, 'Registration successful!')
-            return redirect('index')  # Redirect to home page after successful registration
+
+            # Redirect based on user role
+            if user.is_superuser:
+                return redirect('admin_dashboard')
+            elif user.groups.filter(name='Teachers').exists():
+                return redirect('teacher_dashboard')
+            elif user.groups.filter(name='Principals').exists():
+                return redirect('principal_dashboard')
+            else:
+                return redirect('index')
     else:
         form = RegisterForm()
 
-    return render(request, 'register.html', {'form': form})@login_required
-def add_role(request):
-    if request.method == 'POST':
-        form = RoleForm(request.POST)
-        if form.is_valid():
-            form.save()  # Save the new role
-            return redirect('index')  # Redirect to the home page
-    else:
-        form = RoleForm()
-    return render(request, 'add_role.html', {'form': form})
+    return render(request, 'register.html', {'form': form})
 
 
+# Role Views
 @login_required
 def add_role(request):
     if request.method == 'POST':
         form = RoleForm(request.POST)
         if form.is_valid():
             form.save()  # Save the new role
-            return redirect('index')  # Redirect to the home page
+            return redirect('index')
     else:
         form = RoleForm()
-    return render(request, 'add_roles.html', {'form': form})
+    return render(request, 'add_role.html', {'form': form})
 
+
+# Employee Role Assignment Views
 @login_required
 def add_role_assignment(request):
     if request.method == 'POST':
         form = EmployeeRoleAssignmentForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()  # Save the new assignment
-            return redirect('index')  # Redirect to the home page
+            return redirect('index')
     else:
         form = EmployeeRoleAssignmentForm()
     return render(request, 'add_role_assignment.html', {'form': form})
 
 
+# Event Views
 @login_required
 def add_event(request):
     if request.method == 'POST':
@@ -162,6 +250,8 @@ def add_event(request):
         form = EventForm()
     return render(request, 'add_event.html', {'form': form})
 
+
+# Event Participation Views
 @login_required
 def add_event_participation(request):
     if request.method == 'POST':
@@ -174,27 +264,37 @@ def add_event_participation(request):
         form = EventParticipationForm()
     return render(request, 'add_event_participation.html', {'form': form})
 
+
+# Logout Views
 def logout_view(request):
-    logout(request)  # Logs out the user
-    return redirect('logout_success')  # Redirects to a thank you page or home page
+    logout(request)
+    return redirect('logout_success')
+
+
 def logout_success(request):
     return render(request, 'logout_success.html')
-from django.shortcuts import get_object_or_404
 
+
+# Admin Dashboard View
 @login_required
-def edit_event_type(request, type_id):
-    # Use get_object_or_404 to get the EventType object by type_id
-    event_type = get_object_or_404(EventType, type_id=type_id)
+def admin_dashboard(request):
+    return render(request, 'admin_dashboard.html')
 
-    if request.method == 'POST':
-        # Process the form submission here
-        pass
 
-    return render(request, 'edit_event_type.html', {'event_type': event_type})
-
+# Teacher Dashboard View
 @login_required
-def delete_event_type(request, type_id):
-    event_type = get_object_or_404(EventType, pk=type_id)
-    event_type.delete()
-    # Redirecting back to the event type management page
-    return redirect('manage_event_type')
+def teacher_dashboard(request):
+    return render(request, 'teacher_dashboard.html')
+
+
+# Principal Dashboard View
+@login_required
+def principal_dashboard(request):
+    return render(request, 'principal_dashboard.html')
+
+
+# Access Denied View
+@login_required
+def access_denied(request):
+    return render(request, 'access_denied.html')
+
