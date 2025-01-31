@@ -1,0 +1,16 @@
+<!-- teacher_dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+    <h2>Welcome, Teacher</h2>
+    <p>Manage your event participation and assigned roles.</p>
+    
+    <h3>Your Event Participation</h3>
+    <ul>
+        {% for participation in user_events %}
+            <li>{{ participation.event.name }} - Role: {{ participation.role }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
