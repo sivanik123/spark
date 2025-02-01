@@ -1,12 +1,17 @@
-{% extends 'base.html' %}
-
-{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Event Type</title>
+</head>
+<body>
     <h2>Edit Event Type</h2>
-
+    
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Update Event Type</button>
+        <button type="submit">Save Changes</button>
     </form>
 
-{% endblock %}
+    <a href="{% url 'manage_event_type' %}">Back to Manage Event Types</a>
+</body>
+</html>

@@ -68,6 +68,6 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(EventParticipation)
 class EventParticipationAdmin(admin.ModelAdmin):
-    list_display = ('emp_id', 'event_id', 'doc_link')  # Display fields
+    list_display = ('emp_id', 'event_id')  # Display fields
     list_filter = ('event_id',)  # Filter by event
     search_fields = ('emp_id__emp_name', 'event_id__title')  # Search by employee name or event title

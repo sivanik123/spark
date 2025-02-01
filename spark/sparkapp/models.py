@@ -95,7 +95,22 @@ class Event(models.Model):
 class EventParticipation(models.Model):
     emp_id = models.ForeignKey('Employee', on_delete=models.CASCADE)
     event_id = models.ForeignKey('Event', on_delete=models.CASCADE)
-    doc_link = models.FileField(upload_to='participation_docs/', null=True, blank=True)
+    # doc_link = models.FileField(upload_to='participation_docs/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.emp_id.emp_name} - {self.event_id.title}"
+
+from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.db import models
+
+class CustomUser(AbstractUser):
+    ROLE_CHOICES = (
+        ('admin', 'Admin'),
+        ('teacher', 'Teacher'),
+        ('principal', 'Principal'),
+    )
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='teacher')
+
+    # Fix related_name conflicts
+    groups = models.ManyToManyField(Group, related_name="customuser_groups", blank=True)
+    user_permissions = models.ManyToManyField(Permission, related_name="customuser_permissions", blank=True)
