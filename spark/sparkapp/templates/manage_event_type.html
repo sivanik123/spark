@@ -1,45 +1,37 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    
+<div class="container">
+    <h2 class="text-center mt-4">Manage Event Types</h2>
 
-        <div class="container">
-            <!-- Link to go back to the Event Type Management page -->
-            <a href="{% url 'manage_event_type' %}" class="btn btn-secondary">Back to Event Type Management</a>
-        
-            <!-- Table to display event types -->
-            <table class="table">
-        <thead>
+    <!-- Button to Add a New Event Type -->
+    <a href="{% url 'add_event_type' %}" class="btn btn-success mb-3">Add New Event Type</a>
+
+    <!-- Table to Display Event Types -->
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
             <tr>
-                <th>Event Type</th>
-                <th>Action</th>
+                <th>ID</th>
+                <th>Description</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for event_type in event_types %}
                 <tr>
+                    <td>{{ event_type.type_id }}</td>
                     <td>{{ event_type.type_description }}</td>
                     <td>
                         <a href="{% url 'edit_event_type' event_type.type_id %}" class="btn btn-primary">Edit</a>
-                        <!-- Add confirmation for delete -->
-                        <a href="{% url 'delete_event_type' event_type.type_id %}" class="btn btn-danger" onclick="return confirmDelete();">Delete</a>
+                        <a href="{% url 'delete_event_type' event_type.type_id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to remove this student?')">Remove</a>  <!-- Remove Button with Confirmation -->
                     </td>
                 </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">No Event Types Available</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    <!-- Form for adding a new event type -->
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Add Event Type</button>
-    </form>
-
+</div>
 {% endblock %}
-
-<script>
-    function confirmDelete() {
-        return confirm("Are you sure you want to delete this event type?");
-    }
-</script>

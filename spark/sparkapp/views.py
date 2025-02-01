@@ -1,45 +1,22 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from .forms import UserForm, EmployeeForm, DepartmentForm, DesignationForm, EventTypeForm, VenueForm, RegisterForm, RoleForm, EmployeeRoleAssignmentForm, EventForm, EventParticipationForm
 from .models import Department, Designation, EventType, Role, EmployeeRoleAssignment, Event, EventParticipation
-
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 
-# Login view
-def login_view(request):
-    if request.method == 'POST':
-        # Get username and password from the form
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        
-        # Authenticate the user
-        user = authenticate(request, username=username, password=password)
-        
-        if user is not None:
-            # User is authenticated, log them in
-            login(request, user)
-            messages.success(request, 'Login successful!')
+def admin_group_required(user):
+    return user.groups.filter(name='Admin').exists()
 
-            # Redirect user to the appropriate dashboard based on role
-            if user.is_superuser:
-                return redirect('admin_dashboard')
-            elif user.groups.filter(name='Teachers').exists():
-                return redirect('teacher_dashboard')
-            elif user.groups.filter(name='Principals').exists():
-                return redirect('principal_dashboard')
-            else:
-                return redirect('index')
-        else:
-            # Authentication failed, show error
-            messages.error(request, 'Invalid username or password.')
 
-    return render(request, 'login.html')  # Show login page if no POST request
+def teacher_group_required(user):
+    return user.groups.filter(name='Teacher').exists()
+
+
+def principal_group_required(user):
+    return user.groups.filter(name='Principal').exists()
 
 # Home page
 @login_required
@@ -49,6 +26,7 @@ def index(request):
 
 # Add Employee
 @login_required
+@user_passes_test(admin_group_required)
 def add_emp(request):
     if request.method == 'POST':
         user_form = UserForm(request.POST)
@@ -145,13 +123,16 @@ def add_event_type(request):
     else:
         form = EventTypeForm()
 
-    return render(request, 'manage_event_type.html', {'form': form})
+    return render(request, 'add_event_type.html', {'form': form})
 
 
 # Edit Event Type
 @login_required
 def edit_event_type(request, type_id):
-    event_type = get_object_or_404(EventType, pk=type_id)
+    event_type = get_object_or_404(EventType, type_id=type_id)
+    
+    # Initialize the form with the existing instance
+    form = EventTypeForm(instance=event_type)
 
     if request.method == 'POST':
         form = EventTypeForm(request.POST, instance=event_type)
@@ -162,11 +143,10 @@ def edit_event_type(request, type_id):
 
     return render(request, 'edit_event_type.html', {'form': form, 'event_type': event_type})
 
-
 # Delete Event Type
 @login_required
 def delete_event_type(request, type_id):
-    event_type = get_object_or_404(EventType, pk=type_id)
+    event_type = get_object_or_404(EventType, type_id=type_id)
     event_type.delete()
     return redirect('manage_event_type')
 

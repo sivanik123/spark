@@ -132,7 +132,7 @@ class EventForm(forms.ModelForm):
 class EventParticipationForm(forms.ModelForm):
     class Meta:
         model = EventParticipation
-        fields = ['emp_id', 'event_id', 'doc_link']
-        widgets = {
-            'doc_link': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-        }
+        fields = ['emp_id', 'event_id']
+        # widgets = {
+        #     'doc_link': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        # }

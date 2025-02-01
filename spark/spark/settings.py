@@ -50,6 +50,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'sparkapp.context_processors.is_admin',
+                'sparkapp.context_processors.is_teacher',
+                'sparkapp.context_processors.is_principal',
             ],
         },
     },
@@ -118,10 +121,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Login and Logout Redirect URLs
 LOGIN_URL = 'login'  # Make sure this points to the correct login view
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/index/'
 LOGOUT_REDIRECT_URL = 'login'
 
 
+#AUTH_USER_MODEL = 'sparkapp.CustomUser'
 
-# Uncomment if you have a custom user model
-# AUTH_USER_MODEL = 'sparkapp.User'

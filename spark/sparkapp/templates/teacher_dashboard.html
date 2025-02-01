@@ -8,9 +8,14 @@
     <p>Manage your event participation and assigned roles.</p>
     
     <h3>Your Event Participation</h3>
-    <ul>
-        {% for participation in user_events %}
-            <li>{{ participation.event.name }} - Role: {{ participation.role }}</li>
-        {% endfor %}
-    </ul>
+    <ul class="list-group mt-3">
+        <li class="list-group-item">
+            <li class="list-group-item">
+                <a href="{% url 'manage_event_participation' %}">Manage Event Participation</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'manage_role_assignment' %}">Manage Role Assign</a>
+            </li>
+        </li>
+     </ul>
 {% endblock %}
