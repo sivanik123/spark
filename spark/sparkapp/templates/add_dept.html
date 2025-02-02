@@ -1,29 +1,11 @@
-{% extends 'base.html' %}
-
-{% block title %}Manage Department - SPARK{% endblock %}
-
-{% block content %}
-<div class="container">
-    <h2 class="my-4"> New Department</h2>
-    
-    {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-    
-    <form method="POST">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="dept_name" class="form-label">Department Name</label>
-            {{ form.dept_name }}
-        </div>
-        <button type="submit" class="btn btn-primary">Add Department</button>
-    </form>
-</div>
+{% extends 'base.html' %} {% block title %}Manage Department - SPARK{% endblock %} {% block content %}
+New Department
+{% if messages %}
+{% for message in messages %}
+{{ message }} 
+{% endfor %}
+{% endif %}
+{% csrf_token %}
+Department Name {{ form.dept_name }}
+Add Department
 {% endblock %}

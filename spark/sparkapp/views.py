@@ -51,6 +51,7 @@ def add_emp(request):
 
 # Department Views
 @login_required
+@user_passes_test(admin_group_required)
 def add_department(request):
     if request.method == 'POST':
         form = DepartmentForm(request.POST)
@@ -64,6 +65,7 @@ def add_department(request):
 
 # Designation Views
 @login_required
+@user_passes_test(admin_group_required)
 def manage_designation(request):
     designations = Designation.objects.all()
     return render(request, 'manage_designation.html', {'designations': designations})
@@ -71,6 +73,7 @@ def manage_designation(request):
 
 # Add Designation
 @login_required
+@user_passes_test(admin_group_required)
 def add_designation(request):
     if request.method == 'POST':
         form = DesignationForm(request.POST)
@@ -84,6 +87,7 @@ def add_designation(request):
 
 # Edit Designation
 @login_required
+@user_passes_test(admin_group_required)
 def edit_designation(request, designation_id):
     designation = get_object_or_404(Designation, pk=designation_id)
     if request.method == 'POST':
@@ -98,6 +102,7 @@ def edit_designation(request, designation_id):
 
 # Delete Designation
 @login_required
+@user_passes_test(admin_group_required)
 def delete_designation(request, designation_id):
     designation = get_object_or_404(Designation, pk=designation_id)
     designation.delete()
@@ -106,6 +111,7 @@ def delete_designation(request, designation_id):
 
 # Event Type Views
 @login_required
+@user_passes_test(admin_group_required)
 def manage_event_type(request):
     event_types = EventType.objects.all()
     return render(request, 'manage_event_type.html', {'event_types': event_types})
@@ -113,6 +119,7 @@ def manage_event_type(request):
 
 # Add Event Type
 @login_required
+@user_passes_test(admin_group_required)
 def add_event_type(request):
     if request.method == 'POST':
         form = EventTypeForm(request.POST)
@@ -128,6 +135,7 @@ def add_event_type(request):
 
 # Edit Event Type
 @login_required
+@user_passes_test(admin_group_required)
 def edit_event_type(request, type_id):
     event_type = get_object_or_404(EventType, type_id=type_id)
     
@@ -145,6 +153,7 @@ def edit_event_type(request, type_id):
 
 # Delete Event Type
 @login_required
+@user_passes_test(admin_group_required)
 def delete_event_type(request, type_id):
     event_type = get_object_or_404(EventType, type_id=type_id)
     event_type.delete()
@@ -153,6 +162,7 @@ def delete_event_type(request, type_id):
 
 # Venue Views
 @login_required
+@user_passes_test(admin_group_required)
 def add_venue(request):
     if request.method == 'POST':
         form = VenueForm(request.POST)
@@ -193,6 +203,7 @@ def register(request):
 
 # Role Views
 @login_required
+@user_passes_test(admin_group_required)
 def add_role(request):
     if request.method == 'POST':
         form = RoleForm(request.POST)
@@ -206,6 +217,7 @@ def add_role(request):
 
 # Employee Role Assignment Views
 @login_required
+@user_passes_test(teacher_group_required)
 def add_role_assignment(request):
     if request.method == 'POST':
         form = EmployeeRoleAssignmentForm(request.POST, request.FILES)
@@ -219,6 +231,7 @@ def add_role_assignment(request):
 
 # Event Views
 @login_required
+@user_passes_test(admin_group_required)
 def add_event(request):
     if request.method == 'POST':
         form = EventForm(request.POST)
@@ -233,6 +246,7 @@ def add_event(request):
 
 # Event Participation Views
 @login_required
+@user_passes_test(teacher_group_required)
 def add_event_participation(request):
     if request.method == 'POST':
         form = EventParticipationForm(request.POST, request.FILES)
