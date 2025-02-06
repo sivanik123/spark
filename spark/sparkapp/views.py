@@ -291,4 +291,49 @@ def principal_dashboard(request):
 @login_required
 def access_denied(request):
     return render(request, 'access_denied.html')
+# Manage Departments
+@login_required
+@user_passes_test(admin_group_required)
+def manage_department(request):
+    departments = Department.objects.all()
+    return render(request, 'departments/manage_department.html', {'departments': departments})
+
+# Add Department
+@login_required
+@user_passes_test(admin_group_required)
+def add_department(request):
+    if request.method == 'POST':
+        form = DepartmentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('manage_department')  # Redirect to manage_department instead of itself
+    else:
+        form = DepartmentForm()
+
+    return render(request, 'departments/add_department.html', {'form': form})
+
+# Edit Department
+@login_required
+@user_passes_test(admin_group_required)
+def edit_department(request, dept_id):
+    department = get_object_or_404(Department, dept_id=dept_id)
+    
+    if request.method == "POST":
+        form = DepartmentForm(request.POST, instance=department)
+        if form.is_valid():
+            form.save()
+            return redirect('manage_department')  # Redirect to manage_department
+    
+    else:
+        form = DepartmentForm(instance=department)
+
+    return render(request, 'departments/edit_department.html', {'form': form})
+
+# Delete Department
+@login_required
+@user_passes_test(admin_group_required)
+def delete_department(request, dept_id):
+    department = get_object_or_404(Department, dept_id=dept_id)
+    department.delete()
+    return redirect('manage_department')  # Redirect to manage_department
 

@@ -28,4 +28,8 @@ urlpatterns = [
     path('principal-dashboard/', views.principal_dashboard, name='principal_dashboard'),
     path('access-denied/', views.access_denied, name='access_denied'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('departments/', views.manage_department, name='manage_department'),
+    path('departments/add/', views.add_department, name='add_department'),
+    path('departments/edit/<int:dept_id>/', views.edit_department, name='edit_department'),
+    path('departments/delete/<int:dept_id>/', views.delete_department, name='delete_department'),
 ]
