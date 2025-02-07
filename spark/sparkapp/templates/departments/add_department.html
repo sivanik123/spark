@@ -17,6 +17,7 @@
 
     <hr class="my-4">
 
+    <!-- List of Existing Departments -->
     <h3 class="text-center">Existing Departments</h3>
     <div class="table-responsive">
         <table class="table table-bordered table-striped mt-3">
@@ -37,8 +38,6 @@
                         <button class="btn btn-danger btn-sm" onclick="showDeleteModal('{% url 'delete_department' department.dept_id %}')">
                             Delete
                         </button>
-                        
-
                     </td>
                 </tr>
                 {% empty %}
@@ -75,7 +74,6 @@
 <!-- JavaScript for Delete Confirmation Modal -->
 <script type="text/javascript">
     function showDeleteModal(url) {
-        console.log("Delete URL: " + url);  // Debugging - check if the URL is correct
         document.getElementById('confirmDeleteBtn').href = url;
         var modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
         modal.show();

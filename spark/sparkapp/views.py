@@ -26,27 +26,38 @@ def index(request):
 
 # Add Employee
 @login_required
-@user_passes_test(admin_group_required)
 def add_emp(request):
+    if request.user.groups.filter(name='Teacher').exists():
+        full_form = True  # Teacher gets the full form
+    elif request.user.groups.filter(name='Admin').exists():
+        full_form = False  # Admin gets a limited form
+    else:
+        return redirect('access_denied')  # Restrict other users
+
     if request.method == 'POST':
         user_form = UserForm(request.POST)
-        employee_form = EmployeeForm(request.POST, request.FILES)
+        employee_form = EmployeeForm(request.POST, request.FILES) if full_form else EmployeeForm(request.POST)
+
         if user_form.is_valid() and employee_form.is_valid():
-            # Save User
             user = user_form.save(commit=False)
-            password = user_form.cleaned_data['password']  # Get password from the form
-            user.set_password(password)  # Set the password
-            user.save()  # Save the user with the password
-            # Save Employee with User instance
+            user.set_password(user_form.cleaned_data['password'])  # Set hashed password
+            user.save()
+
             employee = employee_form.save(commit=False)
             employee.user = user
             employee.save()
+
             messages.success(request, 'Employee added successfully!')
             return redirect('index')
     else:
         user_form = UserForm()
         employee_form = EmployeeForm()
-    return render(request, 'add_emp.html', {'user_form': user_form, 'employee_form': employee_form})
+
+    return render(request, 'add_emp.html', {
+        'user_form': user_form,
+        'employee_form': employee_form,
+        'full_form': full_form,
+    })
 
 
 # Department Views
@@ -302,15 +313,15 @@ def manage_department(request):
 @login_required
 @user_passes_test(admin_group_required)
 def add_department(request):
+    form = DepartmentForm()
     if request.method == 'POST':
         form = DepartmentForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('manage_department')  # Redirect to manage_department instead of itself
-    else:
-        form = DepartmentForm()
+            return redirect('manage_department')  # Redirect to department management page
 
-    return render(request, 'departments/add_department.html', {'form': form})
+    departments = Department.objects.all()  # Fetch all departments
+    return render(request, 'departments/add_department.html', {'form': form, 'departments': departments})
 
 # Edit Department
 @login_required

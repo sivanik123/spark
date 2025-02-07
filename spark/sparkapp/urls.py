@@ -1,4 +1,5 @@
 from django.urls import path
+from .views import add_emp  
 from . import views
 from django.contrib.auth import views as auth_views
 
@@ -32,4 +33,6 @@ urlpatterns = [
     path('departments/add/', views.add_department, name='add_department'),
     path('departments/edit/<int:dept_id>/', views.edit_department, name='edit_department'),
     path('departments/delete/<int:dept_id>/', views.delete_department, name='delete_department'),
+    path('add-employee/', add_emp, name='add_emp'),
+
 ]
