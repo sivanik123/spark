@@ -347,4 +347,20 @@ def delete_department(request, dept_id):
     department = get_object_or_404(Department, dept_id=dept_id)
     department.delete()
     return redirect('manage_department')  # Redirect to manage_department
+@login_required
+@user_passes_test(principal_group_required)
+def principal_dashboard(request):
+    teachers = User.objects.filter(groups__name='Teacher').select_related('employee')
 
+    return render(request, 'principal_dashboard.html', {
+        'teachers': teachers,
+    })
+
+@login_required
+@user_passes_test(principal_group_required)
+def teacher_details(request, user_id):
+    teacher = get_object_or_404(User, id=user_id)
+
+    return render(request, 'teacher_details.html', {
+        'teacher': teacher,
+    })
