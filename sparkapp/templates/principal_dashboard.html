@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Principal Dashboard{% endblock %}
+
+{% block content %}
+    <h2>Welcome, Principal</h2>
+    <p>View all employee (teacher) details.</p>
+
+    <h3>Teacher Details</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for teacher in teachers %}
+                <tr>
+                    <td>{{ teacher.username }}</td>
+                    <td>{{ teacher.email }}</td>
+                    <td>{{ teacher.employee.department.name }}</td>
+                    <td>
+                        <a href="{% url 'teacher_details' teacher.id %}" class="btn btn-primary btn-sm">View More</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

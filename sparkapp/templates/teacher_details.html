@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Employee Details for {{ employee.emp_name }}</h2>
+
+  <div class="employee-details">
+    <p><strong>Employee Name:</strong> {{ employee.emp_name }}</p>
+    <p><strong>Department:</strong> {{ employee.dept_id.dept_name }}</p>
+    <p><strong>Designation:</strong> {{ employee.designation_id.designation_name }}</p>
+    <p><strong>Email:</strong> {{ employee.email_id }}</p>
+    <p><strong>Phone Number:</strong> {{ employee.phn_no }}</p>
+    <p><strong>Aadhaar Number:</strong> {{ employee.adhar_no }}</p>
+    <p><strong>Date of Birth:</strong> {{ employee.DOB }}</p>
+    <p><strong>Date of Joining:</strong> {{ employee.date_of_joining }}</p>
+    <p><strong>Status:</strong> {{ employee.status }}</p>
+    <p><strong>Gender:</strong> {{ employee.gender }}</p>
+    <p><strong>Residential Address:</strong> {{ employee.residential_address }}</p>
+    <p><strong>Current Address:</strong> {{ employee.current_address }}</p>
+
+    <h3>Event Participations:</h3>
+    {% if event_participations %}
+      <ul>
+        {% for participation in event_participations %}
+          <li>{{ participation.event_id.title }} ({{ participation.event_id.from_date }} - {{ participation.event_id.to_date }})</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No events participated yet.</p>
+    {% endif %}
+  </div>
+
+  
+{% endblock %}

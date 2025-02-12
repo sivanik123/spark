@@ -1,0 +1,25 @@
+<!-- teacher_dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+    <h2>Welcome, Teacher</h2>
+    <p>              </p>
+    
+    <h3>Your Event Participation</h3>
+    <ul class="list-group mt-3">
+        <li class="list-group-item">
+            <li class="list-group-item">
+                <a href="{% url 'manage_event_participation' %}">Manage Event Participation</a>
+            </li>
+            <li class="list-group-item">
+                <a href="{% url 'manage_role_assignment' %}">Manage Role Assign</a>
+            </li>
+        </li>
+        <li class="list-group-item">
+            <a href="{% url 'add_emp' %}">Manage Employee</a>
+        </li>
+        
+     </ul>
+{% endblock %}
