@@ -356,11 +356,41 @@ def principal_dashboard(request):
         'teachers': teachers,
     })
 
+from django.shortcuts import render, get_object_or_404
+from .models import Employee
+
 @login_required
 @user_passes_test(principal_group_required)
 def teacher_details(request, user_id):
-    teacher = get_object_or_404(User, id=user_id)
+    # Fetch the Employee using the User ID
+    try:
+        employee = Employee.objects.get(user__id=user_id)  # user__id is used to filter the related User
+    except Employee.DoesNotExist:
+        # If the Employee doesn't exist, handle the error, maybe show a 404 page
+        return render(request, '404.html', {'message': 'Employee not found!'})
+
+    # Now get the events the employee participated in (if any)
+    events = Event.objects.filter(eventparticipation__emp_id=employee)
+    
+    # Pass the employee data to the template
+    return render(request, 'teacher_details.html', {
+        'employee': employee,
+        'events': events
+    })  
+
+from django.http import Http404
+
+@login_required
+@user_passes_test(principal_group_required)
+def teacher_details(request, user_id):
+    try:
+        employee = Employee.objects.get(user__id=user_id)
+    except Employee.DoesNotExist:
+        raise Http404("Employee not found")
+
+    events = Event.objects.filter(eventparticipation__emp_id=employee)
 
     return render(request, 'teacher_details.html', {
-        'teacher': teacher,
+        'employee': employee,
+        'events': events
     })
